@@ -128,13 +128,6 @@ always @(*) begin
 end
 
 always @(posedge clk or posedge rst) begin
-    if (rst)
-        valid_s3 <= 0;
-    else
-        valid_s3 <= valid_s2;
-end
-
-always @(posedge clk or posedge rst) begin
     if (rst) begin
         Y <= 0;
         Zero <= 0;
@@ -147,13 +140,15 @@ always @(posedge clk or posedge rst) begin
         Zero <= ~|Y_exec;
         Negative <= Y_exec[63];
         Carry <= (add_en_r | sub_en_r) ? adder_out_r[64] : 1'b0;
+
         Overflow <=
         (add_en_r) ? ((A_s1[63] & B_s1[63] & ~Y_exec[63]) |
                      (~A_s1[63] & ~B_s1[63] & Y_exec[63])) :
         (sub_en_r) ? ((A_s1[63] & ~B_s1[63] & ~Y_exec[63]) |
                      (~A_s1[63] & B_s1[63] & Y_exec[63])) :
         1'b0;
-        valid_out <= valid_s3;
+
+        valid_out <= valid_s2;   
     end
 end
 
